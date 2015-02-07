@@ -1,0 +1,29 @@
+{% extends "gateway_base.html" %}
+{% load widget_tweaks %}
+
+{% block navbar_content %}
+	<ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user }}<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="{% url 'gateway_account' %}">Manage Profile</a></li>
+
+          {% if user.is_superuser %}
+              <li><a href="{% url 'admin:index' %}">Administrator Panel</a></li>
+          {% endif %}
+
+          <li class="divider"></li>
+          <li><a href="{% url 'gateway_logout' %}">Logout</a></li>
+        </ul>
+      </li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <h3><a href="{% url 'app_MonitorDomain' %}">Domain Monitoring</a></h3>
+    <h3><a href="{% url 'app_MonitorIp' %}">IP Monitoring</a></h3>
+    <h3><a href="{% url 'app_Pivoteer' %}">Pivoting Tool</a></h3>
+{% endblock %}
+
+{% block sidekick %}
+{% endblock %}

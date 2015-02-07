@@ -1,0 +1,22 @@
+{% if google_search %}
+   <h4>Google search shows {{ google_search.result_count }}</h4>
+   <table id="OR_table" class="table display"><thead>
+     <tr>
+       <th>Title</th>
+       <th>Link</th>
+       <th>Description</th>
+     </tr>
+   </thead><tbody>
+   {% for row in google_search.results %}
+     <tr>
+       {% for entry in row %}
+         <td>{{ entry }}</td>
+       {% endfor %}
+     </tr>
+   {% endfor %}
+   </tbody></table>
+
+{% else %}
+    No Search Records Available
+
+{% endif %}

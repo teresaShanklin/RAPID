@@ -1,0 +1,149 @@
+{% load pivoteer_extras %}
+
+{% if host_record %}
+  <table id="CR_table" class="table display">
+    <thead>
+      <tr>
+        <th>Resolution Date</th>
+        <th>Domain</th>
+        <th>IP Address</th>
+
+        {% if not host_record.0.query_keyword|verify_type:"ip" %}
+            <th>IP Location</th>
+        {% endif %}
+
+        <th>Source</th>
+      </tr>
+    </thead><tbody>
+    {% for host in host_record %}
+      <tr>
+        <td>{{ host.resolution_date }}</td>
+
+        <td>
+            {% if host.domain_name != host.query_keyword %}
+                <span class="pivot">{{ host.domain_name }}</span>
+            {% else %}
+                {{ host.domain_name }}
+            {% endif %}
+        </td>
+
+        <td>
+            {% if host.ip_address != host.query_keyword %}
+                <span class="pivot">{{ host.ip_address }}</span>
+            {% else %}
+                {{ host.ip_address }}
+            {% endif %}
+        </td>
+
+        {% if host.ip_address != host.query_keyword %}
+            <td>
+                {% if host.ip_location %}
+                    {{ host.ip_location|join:", " }}
+                {% else %}
+                    Unavailable
+                {% endif %}
+            </td>
+        {% endif %}
+
+        <td>{{ host.resolution_source }}</td>
+      </tr>
+    {% endfor %}
+  </tbody></table>
+
+{% else %}
+    No hosting records available
+{% endif %}
+
+
+{% if whois_record %}<br>
+    <h4>Whois Record</h4>
+
+    {% if whois_record.nets %}
+        <table class="table display">
+        <tbody><tr><td>
+            Query: {{ whois_record.query }}<br>
+            ASN: {{ whois_record.asn }}<br>
+            ASN CIDR: {{ whois_record.asn_cidr }}<br>
+            ASN Country: {{ whois_record.asn_country_code }}<br>
+            ASN Date: {{ whois_record.asn_date }}<br>
+            Referral: {{ whois_record.referral }}<br>
+
+            {% for net in whois_record.nets %}
+                {% for field, data in net.items %}
+                    {{ field }}: {{ data }}<br>
+                {% endfor %}
+            {% endfor %}
+            </tr>
+        </tbody></table>
+
+    {% elif whois_record.contacts %}
+        <table class="table display">
+        <tbody>
+            <tr><td>
+              Record ID: {{ whois_record.id.0 }}<br>
+              Registrar: {{ whois_record.registrar.0 }}<br>
+              Creation Date: {{ whois_record.creation_date.0 }}<br>
+              Update Date: {{ whois_record.updated_date.0 }}<br>
+              Expire Date: {{ whois_record.expiration_date.0 }}<br>
+              Contact Email: {{ whois_record.emails.0 }}<br>
+
+              {% for status in whois_record.status %}
+                Status: {{ status }}<br>
+              {% endfor %}
+            </td><td>
+              {% for server in whois_record.whois_server %}
+                Whois Server: {{ server }}<br>
+              {% endfor %}
+
+              {% for server in whois_record.nameservers %}
+                Name Sever: {{ server }}<br>
+              {% endfor %}
+            </td></tr>
+
+            <tr><td><b>Admin Contact</b><br>
+                {% if whois_record.contacts.admin.items %}
+                    {% for key, data in whois_record.contacts.admin.items %}
+                        {{ key }}: {{ data }}<br>
+                    {% endfor %}
+                {% else %}
+                    {{ whois_record.contacts.admin }}
+                {% endif %}
+
+            </td><td><b>Registrant Contact</b><br>
+                {% if whois_record.contacts.registrant.items %}
+                    {% for key, data in whois_record.contacts.registrant.items %}
+                        {{ key }}: {{ data }}<br>
+                    {% endfor %}
+                {% else %}
+                    {{ whois_record.contacts.registrant }}
+                {% endif %}
+            </td></tr>
+
+            <tr><td><b>Tech Contact</b><br>
+                {% if whois_record.contacts.tech.items %}
+                    {% for key, data in whois_record.contacts.tech.items %}
+                        {{ key }}: {{ data }}<br>
+                    {% endfor %}
+                {% else %}
+                    {{ whois_record.contacts.tech }}
+                {% endif %}
+
+            </td><td><b>Billing Contact</b><br>
+                {% if whois_record.contacts.billing.items %}
+                    {% for key, data in whois_record.contacts.billing.items %}
+                        {{ key }}: {{ data }}<br>
+                    {% endfor %}
+                {% else %}
+                    {{ whois_record.contacts.billing }}
+                {% endif %}
+            </td></tr>
+        </tbody></table>
+
+    {% else %}
+        No WHOIS record available
+    {% endif %}
+
+{% else %}
+    No WHOIS record available
+
+{% endif %}

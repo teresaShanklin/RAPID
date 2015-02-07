@@ -1,0 +1,13 @@
+.dropdown-menu {
+    width: 150px !important;
+}
+
+.panel-body {
+padding: 15px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.pivot {
+    color:blue;
+}

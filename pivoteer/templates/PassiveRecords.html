@@ -1,0 +1,55 @@
+{% load pivoteer_extras %}
+
+{% if passive_records %}
+    <table id="PR_table" class="table display">
+     <thead>
+      <tr>
+        <th>Resolution Date</th>
+        <th>Domain Name</th>
+        <th>IP Address</th>
+
+        {% if not passive_records.0.query_keyword|verify_type:"ip" %}
+          <th>IP Location</th>
+        {% endif %}
+
+        <th>Source</th>
+      </tr>
+     </thead><tbody>
+     {% for record in passive_records %}
+        <tr>
+          <td>{{ record.resolution_date }}</td>
+
+          <td>
+              {% if record.domain_name != record.query_keyword %}
+                  <span class="pivot">{{ record.domain_name }}</span>
+              {% else %}
+                  {{ record.domain_name }}
+              {% endif %}
+          </td>
+
+          <td>
+              {% if record.ip_address != record.query_keyword %}
+                  <span class="pivot">{{ record.ip_address }}</span>
+              {% else %}
+                  {{ record.ip_address }}
+              {% endif %}
+          </td>
+
+          {% if record.ip_address != record.query_keyword %}
+            <td>
+                {% if record.ip_location %}
+                    {{ record.ip_location|join:", " }}
+                {% else %}
+                    Unavailable
+                {% endif %}
+            </td>
+          {% endif %}
+
+          <td>{{ record.resolution_source }}</td>
+        </tr>
+     {% endfor %}
+    </tbody></table>
+
+{% else %}
+    No Passive Records Available
+{% endif %}

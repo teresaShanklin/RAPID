@@ -1,0 +1,74 @@
+{% extends "gateway_navigation.html" %}
+{% load widget_tweaks %}
+
+{%  block content %}
+    <div class="row">
+
+        <div class="col-lg-4">
+          <h4>Update Email</h4>
+          <form class="form-inline" action="{% url 'gateway_account' %}" method="post">
+            {% csrf_token %}
+            {{ AccountManagementForm.email|attr:"class:form-control"|attr:"placeholder:Enter New Email" }}
+            <input class="btn btn-primary" type="submit" value="Update" />
+          </form>
+
+          <br>
+
+          <h4>Change Password</h4>
+          <form class="form" action="{% url 'gateway_account' %}" method="post">
+            {% csrf_token %}
+            {{ ChangePasswordForm.password|attr:"class:form-control"|attr:"placeholder:Enter Current Password" }}
+
+            <br><label>New Password</label>
+            {{ ChangePasswordForm.new_password|attr:"class:form-control"|attr:"placeholder:Enter New Password" }}
+            {{ ChangePasswordForm.verify_password|attr:"class:form-control"|attr:"placeholder:Verify New Password" }}
+
+            <br>
+            <input class="btn btn-primary" type="submit" value="Submit" />
+
+          </form>
+        </div>
+    </div>
+
+<br>
+{%  endblock %}
+
+
+
+
+{% block sidekick %}
+
+    <div class="list-group" align="center">
+      <div class="list-group-item active">
+        <h4 class="list-group-item-heading" align="center">Account Details</h4>
+      </div>
+
+      <div class="list-group-item" align="left">
+        <b>Email:</b> {{ user.email }}<br>
+      </div>
+
+      <div class="list-group-item">
+        <form action = "{% url 'gateway_account' %}" method = "post">
+            {% csrf_token %}
+            {% if user.alerts %}
+                <input class="btn btn-success" type="submit" name="email_toggle" value="Alerts Enabled" />
+            {% else %}
+                <input class="btn btn-danger" type="submit" name="email_toggle" value="Alerts Disabled" />
+            {% endif %}
+        </form>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block form_errors %}
+    {% if AccountManagementForm.errors or ChangePasswordForm.errors %}
+      <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          {{ AccountManagementForm.email.errors }}
+          {{ ChangePasswordForm.password.errors }}
+          {{ ChangePasswordForm.new_password.errors }}
+          {{ ChangePasswordForm.verify_password.errors }}
+      </div>
+    {% endif %}
+{% endblock %}

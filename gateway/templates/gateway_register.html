@@ -1,0 +1,53 @@
+{% extends "gateway_login.html" %}
+{% load widget_tweaks %}
+
+
+{%  block sidekick %}
+    <div class="list-group" align="center">
+      <div class="list-group-item active">
+        <h4 class="list-group-item-heading">Registration</h4>
+      </div>
+
+      <form class="list-group-item" role="form" action="{% url 'gateway_register' %}" method="post">
+
+        {% csrf_token %}
+        <div class="form-group">
+          {{ RegistrationForm.email|attr:"class:form-control"|attr:"placeholder:Enter Email" }}
+        </div>
+
+        <div class="form-group">
+          {{ RegistrationForm.password|attr:"class:form-control"|attr:"placeholder:Enter Password" }}
+        </div>
+
+        <div class="form-group">
+          {{ RegistrationForm.verify_password|attr:"class:form-control"|attr:"placeholder:Verify Password" }}
+        </div>
+
+        <div class="form-group">
+          {{ RegistrationForm.registration_code|attr:"class:form-control"|attr:"placeholder:Enter Registration Code" }}
+        </div>
+
+        <input class="btn btn-success btn-lg" type="submit" value="Register" />
+        <a class="btn btn-danger btn-lg" href="{% url 'gateway_login' %}">Cancel</a>
+
+      </form>
+    </div>
+
+{% endblock %}
+
+
+{% block form_errors %}
+  {% if RegistrationForm.errors %}
+    <div class="alert alert-danger" role="alert">
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+      </button>
+        {{ RegistrationForm.username.errors }}
+        {{ RegistrationForm.password.errors }}
+        {{ RegistrationForm.verify_password.errors }}
+        {{ RegistrationForm.email.errors }}
+        {{ RegistrationForm.registration_code.errors }}
+    </div>
+  {% endif %}
+{% endblock %}

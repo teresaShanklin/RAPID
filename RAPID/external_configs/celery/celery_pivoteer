@@ -1,0 +1,29 @@
+# Names of nodes to start
+CELERYD_NODES="p1 p2 p3"
+
+# Absolute or relative path to the 'celery' command:
+CELERY_BIN="/usr/local/bin/celery"
+
+# App instance to use
+CELERY_APP="RAPID"
+
+# Where to chdir at start.
+CELERYD_CHDIR="/vagrant/"
+
+# %N will be replaced with the first part of the nodename.
+CELERYD_LOG_FILE="/var/log/celery/%N.log"
+CELERYD_PID_FILE="/var/run/celery/%N.pid"
+
+# Extra command-line arguments to the worker
+CELERYD_OPTS="-Q pivoteer --time-limit=300 --concurrency=3"
+
+# Workers should run as an unprivileged user.
+CELERYD_USER="celery"
+CELERYD_GROUP="celery"
+
+# If enabled pid and log directories will be created if missing,
+# and owned by the userid/group configured.
+CELERY_CREATE_DIRS=1
+
+# Name of projects setting module relative to project path.
+export DJANGO_SETTINGS_MODULE="RAPID.settings"

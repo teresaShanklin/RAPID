@@ -1,0 +1,162 @@
+{% extends "gateway_navigation.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% load monitor_extras %}
+
+{%  block content %}
+
+  <!-- Bulk Submission Modal -->
+  <div id="bulk-submit" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myMediumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div id="bulk-header" class="modal-header" align="center">
+            <h4>{{ BulkSubmissionForm.domains.label }}</h4>
+        </div>
+
+        <div id="bulk-body" class="modal-body" align="center">
+          <form class="form-inline" role="form" action="{% url 'MonitorDomain_bulk' %}" method="post">
+            {% csrf_token %}
+            {{ BulkSubmissionForm.domains|attr:"class:form-control"|attr:"placeholder:Enter a delimited list of domains"|attr:"rows:15"|attr:"cols:60"}}
+            <br><br><input class="btn btn-success btn-lg" type="submit" value="Monitor Domains"/>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <form class="form" role="form" action="{% url 'MonitorDomain_del' %}" method="post">
+    {% csrf_token %}
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="muted panel-title">Domains Monitored
+          <input class="btn btn-primary btn-xs pull-right" type="submit" value="Delete Selected Monitors"/>
+        </h3>
+      </div>
+
+      <div class="panel-body">
+      {% if monitor_list %}
+        <table id="monitor_table" class="table display">
+          <thead><tr>
+            <th></th>
+            <th>Domain</th>
+            <th>Next Lookup</th>
+            <th>Last Lookup</th>
+            <th>IP Addresses</th>
+          </tr></thead>
+          <tbody>
+          {% for monitor in monitor_list %}
+            <tr>
+              <td><input type="checkbox" value="{{ monitor.domain_name }}" name="choices"></td>
+              <td>{{ monitor.domain_name }}</td>
+              <td>{{ monitor.next_lookup }}</td>
+              <td>{{ monitor.last_lookup }}</td>
+              <td>
+                {% if monitor.last_hosts|length > 10 %}
+
+                  {% with collapse_id=monitor.domain_name|digest %}
+                    <button type="button" class="btn btn-link btn-xs" data-toggle="collapse" data-target="#{{ collapse_id }}" aria-expanded="true" aria-controls="{{ collapse_id }}">
+                      {{ monitor.last_hosts|length }} IP addresses
+                    </button>
+
+                    <div id="{{ collapse_id }}" class="collapse">
+                      {% for host in monitor.last_hosts %}
+                        {{ host }}<br>
+                      {% endfor %}
+                    </div>
+                  {% endwith %}
+
+                {% else %}
+                  {% for host in monitor.last_hosts %}
+                    {{ host }}<br>
+                  {% endfor %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        Nothing Monitored
+      {% endif %}
+      </div>
+    </div>
+  </form>
+
+  <div class="panel panel-danger">
+    <div class="panel-heading">
+      <h3 class="muted panel-title">Domain Alerts for Last 72 Hours</h3>
+    </div>
+
+    <div class="panel-body">
+      {% if alert_list %}
+      <table id="alert_table" class="table display">
+        <thead><tr>
+          <th>Domain</th>
+          <th>Alert Text</th>
+          <th>Alert Time</th>
+        </tr></thead>
+        <tbody>
+        {% for alert in alert_list %}
+          <tr>
+            <td>{{ alert.domain_name }}</td>
+            <td>{{ alert.alert_text }}</td>
+            <td>{{ alert.alert_time }}</td>
+          </tr>
+        {% endfor %}
+        </tbody></table>
+      {% else %}
+        No alerts
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}
+
+
+{% block sidekick %}
+
+    <div class="list-group" align="center">
+      <div class="list-group-item active">
+        <h4 class="list-group-item-heading" align="center">Domain Monitor</h4>
+      </div>
+
+      <div class="list-group-item">
+        <form class="form-inline" role="form" action="{% url 'MonitorDomain_add' %}" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ SubmissionForm.domain|attr:"class:form-control"|attr:"placeholder:Enter Domain" }}<br>
+            <input class="btn btn-success btn-md btn-block" type="submit" value="Monitor Domain"/>
+          </div>
+        </form>
+
+        <br>
+
+        <button class="btn btn-default btn-md btn-block" data-target="#bulk-submit" data-toggle="modal">Submit Multiple Domains</button>
+        <a class="btn btn-default btn-md btn-block" href="{% url 'MonitorDomain_export' %}">Export Monitor List</a>
+      </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block form_errors %}
+  {% if SubmissionForm.errors or BulkSubmissionForm.errors %}
+
+    <div class="alert alert-danger" role="alert">
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+      </button>
+
+      {{ SubmissionForm.domain.errors }}
+      {{ BulkSubmissionForm.domains.errors }}
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block js_additions %}
+  <script src="{% static "monitor.js" %}"></script>
+{% endblock %}

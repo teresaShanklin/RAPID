@@ -1,0 +1,125 @@
+{% extends "gateway_navigation.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{%  block content %}
+
+  <ol id="pivot_navigator" class="breadcrumb">
+  </ol>
+
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="muted panel-title">Current Records
+        <a class="export pull-right" href="#" data-export-type="current">
+          <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+        </a>
+      </h3>
+    </div>
+
+    <div class="panel-body" id="current">
+    </div>
+  </div>
+
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="muted panel-title">Passive Records
+        <a class="export pull-right" href="#" data-export-type="passive">
+          <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+        </a>
+      </h3>
+    </div>
+
+    <div class="panel-body" id="passive">
+    </div>
+
+  </div>
+
+  <div class="panel panel-danger">
+    <div class="panel-heading inline">
+      <h3 class="muted panel-title">Malware Records
+        <a class="export pull-right" href="#" data-export-type="malware">
+          <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+        </a>
+      </h3>
+    </div>
+
+
+
+
+    <div class="panel-body" id="malware">
+    </div>
+
+  </div>
+
+  <div class="panel panel-warning">
+    <div class="panel-heading">
+      <h3 class="muted panel-title">Additional Records
+        <a class="export pull-right" href="#" data-export-type="other">
+          <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+        </a>
+      </h3>
+    </div>
+
+    <div class="panel-body" id="other">
+    </div>
+
+  </div>
+
+{%  endblock %}
+
+
+{% block sidekick %}
+
+    <div class="list-group" align="center">
+      <div class="list-group-item active">
+        <h4 class="list-group-item-heading" align="center">Pivoteer</h4>
+      </div>
+
+      <div class="list-group-item">
+        <form class="form-inline" role="form" action="{% url 'app_Pivoteer' %}" method="post" id="research_indicator">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ SubmissionForm.indicator|attr:"class:form-control"|attr:"placeholder:Enter Indicator" }}<br>
+            <input class="btn btn-success btn-md btn-block" type="submit" value="Research"/>
+          </div>
+        </form>
+
+        <br>
+
+        <a class="btn btn-default btn-md btn-block export" href="#" data-export-type="all">
+            Export All Records
+        </a>
+
+        <form id="export" method="post" action="{% url 'Pivoteer_Export' %}">
+            {% csrf_token %}
+            <input type="hidden" id="export_type" name="export" value="" />
+            <input type="hidden" id="export_indicator" name="indicator" value="" />
+        </form>
+
+      </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block form_errors %}
+  {% if SubmissionForm.errors %}
+
+    <div class="alert alert-danger" role="alert">
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+      </button>
+
+      {{ SubmissionForm.indicator.errors }}
+    </div>
+  {% endif %}
+{% endblock %}
+
+
+{% block js_additions %}
+
+  <script src="{% static "pivoteer.js" %}"></script>
+
+{% endblock %}
