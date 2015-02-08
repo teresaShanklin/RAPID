@@ -220,10 +220,18 @@ def passivetotal_resolutions(self, indicator, indicator_type):
         for entry in resolutions:
 
             if entry['firstSeen'] != 'None':
-                cleaned.append((entry['value'], entry['firstSeen'], entry['country']))
+
+                if indicator_type == "domain":
+                    cleaned.append((entry['value'], entry['firstSeen'], entry['country']))
+                else:
+                    cleaned.append((entry['value'], entry['firstSeen']))
 
             if entry['lastSeen'] != 'None' and entry['lastSeen'] != entry['firstSeen']:
-                cleaned.append((entry['value'], entry['lastSeen'], entry['country']))
+
+                if indicator_type == "domain":
+                    cleaned.append((entry['value'], entry['lastSeen'], entry['country']))
+                else:
+                    cleaned.append((entry['value'], entry['lastSeen']))
 
         # Delete old entries before inserting new ones - not ideal solution but will work for now
         HostRecord.objects.filter(query_keyword=indicator, resolution_source=source).delete()
